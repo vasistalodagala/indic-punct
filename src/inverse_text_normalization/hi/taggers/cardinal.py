@@ -67,27 +67,39 @@ class CardinalFst(GraphFst):
         graph_zero = pynini.string_file(get_abs_path(data_path + "numbers/zero.tsv"))
         graph_tens = pynini.string_file(get_abs_path(data_path + "numbers/tens.tsv"))
         graph_digit = pynini.string_file(get_abs_path(data_path + "numbers/digit.tsv"))
+        graph_multiples = pynini.string_file(get_abs_path(data_path + "numbers/multiples.tsv"))
+        graph_ties = pynini.string_file(get_abs_path(data_path + "numbers/ties.tsv"))
+        graph_chars = pynini.string_file(get_abs_path(data_path + "numbers/alphabets.tsv"))
+        graph_char_multiples = pynini.string_file(get_abs_path(data_path + "numbers/multiples_alphabets.tsv"))
 
-        graph_hundred = pynini.cross("सौ", "00")
-        graph_crore = pynini.cross("करोड़", "0000000")
-        graph_lakh = pynini.cross("लाख", "00000")
-        graph_thousand  = pynini.cross("हज़ार", "000") | pynini.cross("हजार", "000")
+        cents = pynini.accep("सौ") | pynini.accep("हंड्रेड") | pynini.accep("हन्ड्रड")
+        thousands = pynini.accep("थाउज़न्ड") | pynini.accep("हज़ार") | pynini.accep("थाउज़ेंड") | pynini.accep("हजार") | pynini.accep("थाउजेंड")
+        lakhs = pynini.accep("लाख") | pynini.accep("लैक")
+        crores = pynini.accep("करोड़") | pynini.accep("क्रोर")
+        
+        graph_hundred = pynini.cross("सौ", "100") | pynini.cross("हंड्रेड", "100") | pynini.cross("हन्ड्रड", "100")
+        graph_thousand  = pynini.cross("हज़ार", "1000") | pynini.cross("थाउज़न्ड", "1000") | pynini.cross("थाउज़ेंड", "1000") | pynini.cross("थाउजेंड", "1000") | pynini.cross("हजार", "1000")
+        graph_lakh = pynini.cross("लाख", "100000") | pynini.cross("लैक", "100000")
+        graph_crore = pynini.cross("करोड़", "10000000") | pynini.cross("क्रोर", "10000000")
 
-        graph_hundred_component = pynini.union(graph_digit + delete_space + pynutil.delete("सौ") + delete_space,
+        #Handles 1-999 (direct spoken)
+        graph_hundred_component = pynini.union(graph_digit + delete_space + pynutil.delete(cents) + delete_space,
                                                pynutil.insert("0"))
-        graph_hundred_component += pynini.union(graph_tens, pynutil.insert("0") + (graph_digit | pynutil.insert("0")))
+        graph_hundred_component += pynini.union(graph_tens, (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")))
 
         # handling double digit hundreds like उन्निस सौ + digit/thousand/lakh/crore etc
-        graph_hundred_component_prefix_tens = pynini.union(graph_tens + delete_space + pynutil.delete("सौ") + delete_space,)
+        graph_hundred_component_prefix_tens = pynini.union(graph_tens + delete_space + pynutil.delete(cents) + delete_space,)
                                                            # pynutil.insert("55"))
         graph_hundred_component_prefix_tens += pynini.union(graph_tens,
-                                                            pynutil.insert("0") + (graph_digit | pynutil.insert("0")))
+                                                            (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")))
 
         # graph_hundred_component_at_least_one_none_zero_digit = graph_hundred_component @ (
         #         pynini.closure(HINDI_DIGIT_WITH_ZERO) + (HINDI_DIGIT_WITH_ZERO - "०") + pynini.closure(HINDI_DIGIT_WITH_ZERO)
         # )
+
+        #Handles 10-99 in both hi, en
         graph_hundred_component_non_hundred = pynini.union(graph_tens,
-                                                           pynutil.insert("0") + (graph_digit | pynutil.insert("0")))
+                                                            (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")))
 
         graph_hundred_component = pynini.union(graph_hundred_component,
                                                graph_hundred_component_prefix_tens)
@@ -101,17 +113,17 @@ class CardinalFst(GraphFst):
         )
 
         graph_thousands_component = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + (pynutil.delete("हज़ार") | pynutil.delete("हजार")),
+            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete(thousands),
             pynutil.insert("00", weight=0.1),
         )
 
         graph_lakhs_component = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete("लाख"),
+            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete(lakhs),
             pynutil.insert("00", weight=0.1)
         )
 
         graph_crores_component = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete("करोड़"),
+            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete(crores),
             pynutil.insert("00", weight=0.1)
         )
 
@@ -129,18 +141,21 @@ class CardinalFst(GraphFst):
 
         fst_crore = fst+graph_crore # handles words like चार हज़ार करोड़
         fst_lakh = fst+graph_lakh # handles words like चार हज़ार लाख
-        fst = pynini.union(fst, fst_crore, fst_lakh, graph_crore, graph_lakh, graph_thousand, graph_hundred)
+        fst = pynini.union(fst, fst_crore, fst_lakh, graph_crore, graph_lakh, graph_thousand, graph_hundred, graph_zero, graph_multiples, graph_char_multiples, graph_chars)
 
-        labels_exception = [num_to_word(x) for x in range(1, 3)]
-        graph_exception = pynini.union(*labels_exception)
+        # labels_exception = [num_to_word(x) for x in range(1, 3)]
+        # graph_exception = pynini.union(*labels_exception)
 
         self.graph_no_exception = fst
+        self.graph = fst
 
-        self.graph = (pynini.project(fst, "input") - graph_exception.arcsort()) @ fst
+        # self.graph = (pynini.project(fst, "input") - graph_exception.arcsort()) @ fst
 
         optional_minus_graph = pynini.closure(
             pynutil.insert("negative: ") + pynini.cross("minus", "\"-\"") + NEMO_SPACE, 0, 1
         )
+
+        
 
         final_graph = optional_minus_graph + pynutil.insert("integer: \"") + self.graph + pynutil.insert("\"")
 
