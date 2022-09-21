@@ -1,15 +1,15 @@
 from inverse_text_normalization.hi.run_predict import inverse_normalize_text as hi_itn
-from inverse_text_normalization.en.run_predict import inverse_normalize_text as en_itn
-from inverse_text_normalization.gu.run_predict import inverse_normalize_text as gu_itn
-from inverse_text_normalization.te.run_predict import inverse_normalize_text as te_itn
-from inverse_text_normalization.mr.run_predict import inverse_normalize_text as mr_itn
-from inverse_text_normalization.pa.run_predict import inverse_normalize_text as pa_itn
-from inverse_text_normalization.ta.run_predict import inverse_normalize_text as ta_itn
-from inverse_text_normalization.bn.run_predict import inverse_normalize_text as bn_itn
-from inverse_text_normalization.ml.run_predict import inverse_normalize_text as ml_itn
-from inverse_text_normalization.ori.run_predict import inverse_normalize_text as or_itn
-from inverse_text_normalization.asm.run_predict import inverse_normalize_text as as_itn
-from inverse_text_normalization.kn.run_predict import inverse_normalize_text as kn_itn
+# from inverse_text_normalization.en.run_predict import inverse_normalize_text as en_itn
+# from inverse_text_normalization.gu.run_predict import inverse_normalize_text as gu_itn
+# from inverse_text_normalization.te.run_predict import inverse_normalize_text as te_itn
+# from inverse_text_normalization.mr.run_predict import inverse_normalize_text as mr_itn
+# from inverse_text_normalization.pa.run_predict import inverse_normalize_text as pa_itn
+# from inverse_text_normalization.ta.run_predict import inverse_normalize_text as ta_itn
+# from inverse_text_normalization.bn.run_predict import inverse_normalize_text as bn_itn
+# from inverse_text_normalization.ml.run_predict import inverse_normalize_text as ml_itn
+# from inverse_text_normalization.ori.run_predict import inverse_normalize_text as or_itn
+# from inverse_text_normalization.asm.run_predict import inverse_normalize_text as as_itn
+# from inverse_text_normalization.kn.run_predict import inverse_normalize_text as kn_itn
 
 def format_numbers_with_commas(sent, lang):
     words = []
@@ -28,9 +28,9 @@ def format_numbers_with_commas(sent, lang):
                 # getting [num_before_decimal_point, decimal_point, num_after_decimal_point]
                 if lang == 'hi':
                     # adding commas after every 2 digits after the last 3 digits
-                    r = ",".join([s[x - 2:x] for x in range(-3, -len(s), -2)][::-1] + [s[-3:]])
+                    r = "".join([s[x - 2:x] for x in range(-3, -len(s), -2)][::-1] + [s[-3:]])
                 else:
-                    r = ",".join([s[x - 3:x] for x in range(-3, -len(s), -3)][::-1] + [s[-3:]])
+                    r = "".join([s[x - 3:x] for x in range(-3, -len(s), -3)][::-1] + [s[-3:]])
 
                 word = "".join([r] + d)  # joining decimal points as is
 
@@ -41,7 +41,7 @@ def format_numbers_with_commas(sent, lang):
                 words.append(word)
         else:
             words.append(word)
-    return ' '.join(words)
+    return ''.join(words)
 
 
 def inverse_normalize_text(text_list, lang):
@@ -49,75 +49,75 @@ def inverse_normalize_text(text_list, lang):
         itn_results = hi_itn(text_list)
         itn_results_formatted = [format_numbers_with_commas(sent=sent, lang=lang) for sent in itn_results]
         return itn_results_formatted
-    elif lang in ['en', 'en_bio']:
-        itn_results = en_itn(text_list)
-        keywords_for_en_format = ["million", "billion", "trillion", "quadrillion", "quintillion", "sextillion"]
-        itn_results_formatted = []
-        for orig_sent, itn_sent in zip(text_list, itn_results):
-            use_en_format = any(item in orig_sent.split(' ') for item in keywords_for_en_format)
-            if use_en_format == 1:
-                lang_format = 'en'
-            else:
-                lang_format = 'hi'
-            itn_results_formatted.append(format_numbers_with_commas(sent=itn_sent, lang=lang_format))
+    # elif lang in ['en', 'en_bio']:
+    #     itn_results = en_itn(text_list)
+    #     keywords_for_en_format = ["million", "billion", "trillion", "quadrillion", "quintillion", "sextillion"]
+    #     itn_results_formatted = []
+    #     for orig_sent, itn_sent in zip(text_list, itn_results):
+    #         use_en_format = any(item in orig_sent.split(' ') for item in keywords_for_en_format)
+    #         if use_en_format == 1:
+    #             lang_format = 'en'
+    #         else:
+    #             lang_format = 'hi'
+    #         itn_results_formatted.append(format_numbers_with_commas(sent=itn_sent, lang=lang_format))
 
-        return itn_results_formatted
-    elif lang == 'gu':
-        itn_results = gu_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     return itn_results_formatted
+    # elif lang == 'gu':
+    #     itn_results = gu_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
 
-    elif lang == 'te':
+    # elif lang == 'te':
 
-        itn_results = te_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     itn_results = te_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
 
-    elif lang == 'mr':
+    # elif lang == 'mr':
 
-        itn_results = mr_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     itn_results = mr_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
 
-    elif lang == 'pa':
+    # elif lang == 'pa':
 
-        itn_results = pa_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     itn_results = pa_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
 
-    elif lang == 'ta':
+    # elif lang == 'ta':
 
-        itn_results = ta_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     itn_results = ta_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
 
-    elif lang == 'bn':
+    # elif lang == 'bn':
 
-        itn_results = bn_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     itn_results = bn_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
 
-    elif lang == 'ml':
+    # elif lang == 'ml':
 
-        itn_results = ml_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     itn_results = ml_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
 
-    elif lang == 'or':
+    # elif lang == 'or':
 
-        itn_results = or_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     itn_results = or_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
 
-    elif lang == 'as':
+    # elif lang == 'as':
 
-        itn_results = as_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     itn_results = as_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
 
     
-    elif lang == 'kn':
+    # elif lang == 'kn':
 
-        itn_results = kn_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     itn_results = kn_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
