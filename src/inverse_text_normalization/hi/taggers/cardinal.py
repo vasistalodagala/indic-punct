@@ -72,6 +72,7 @@ class CardinalFst(GraphFst):
         graph_ties = pynini.string_file(get_abs_path(data_path + "numbers/ties.tsv"))
         graph_chars = pynini.string_file(get_abs_path(data_path + "numbers/alphabets.tsv"))
         graph_char_multiples = pynini.string_file(get_abs_path(data_path + "numbers/multiples_alphabets.tsv"))
+        graph_tens_en = pynini.string_file(get_abs_path(data_path + "numbers/tens-en.tsv"))
 
         cents = pynini.accep("सौ") | pynini.accep("हंड्रेड") | pynini.accep("हन्ड्रड")
         thousands = pynini.accep("थाउज़न्ड") | pynini.accep("हज़ार") | pynini.accep("थाउज़ेंड") | pynini.accep("हजार") | pynini.accep("थाउजेंड")
@@ -90,10 +91,16 @@ class CardinalFst(GraphFst):
                                                pynutil.insert("0"))
         graph_hundred_component += pynini.union(graph_tens , (graph_ties  | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")))
         # handling double digit hundreds like उन्निस सौ + digit/thousand/lakh/crore etc
-        graph_hundred_component_prefix_tens = pynini.union(graph_tens + delete_space + pynutil.delete(cents) + delete_space,)
-                                                           # pynutil.insert("55"))
+        #graph_hundred_component_prefix_tens = pynini.union(graph_tens + delete_space + pynutil.delete(cents) + delete_space,)
+        #                                                   # pynutil.insert("55"))
+        graph_hundred_component_prefix_tens = pynini.union((graph_tens_en | graph_tens) + delete_space + pynutil.delete(cents) + (delete_space + del_And + delete_space | delete_space),
+                                                            pynutil.insert("0"))
+
         graph_hundred_component_prefix_tens += pynini.union(graph_tens,
                                                             (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")))
+
+        # Although above two components have the capability to handle 1-99 also, but since we are combining both of them
+        # later on, ambiguity creeps in. So, we define a shorter fst below to handle the cases from 1-99 exclusively.
 
         # graph_hundred_component_at_least_one_none_zero_digit = graph_hundred_component @ (
         #         pynini.closure(HINDI_DIGIT_WITH_ZERO) + (HINDI_DIGIT_WITH_ZERO - "०") + pynini.closure(HINDI_DIGIT_WITH_ZERO)
@@ -103,6 +110,8 @@ class CardinalFst(GraphFst):
         graph_hundred_component_non_hundred = pynini.union(graph_tens,
                                                             (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")))
 
+        #This thing now handles only 100-999 cases (in regular spoken form) and 1000-9999 (in hundred spoken form)
+        #Because of combining these both FSTs, there comes ambiguity while dealing with 1-99 cases.
         graph_hundred_component = pynini.union(graph_hundred_component,
                                                graph_hundred_component_prefix_tens)
 
@@ -114,6 +123,8 @@ class CardinalFst(GraphFst):
             graph_hundred_component_at_least_one_none_zero_digit
         )
 
+        #If hazar reference is present, then extract the before "non hazar" part and delete "hazar"
+        #else, just add 00
         graph_thousands_component = pynini.union(
             graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete(thousands),
             pynutil.insert("00", weight=0.1),
