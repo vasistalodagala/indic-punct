@@ -94,7 +94,7 @@ class CardinalFst(GraphFst):
         #graph_hundred_component_prefix_tens = pynini.union(graph_tens + delete_space + pynutil.delete(cents) + delete_space,)
         #                                                   # pynutil.insert("55"))
         graph_hundred_component_prefix_tens = pynini.union((graph_tens_en | graph_tens) + delete_space + pynutil.delete(cents) + (delete_space + del_And + delete_space | delete_space),
-                                                            pynutil.insert("0"))
+                                                            )
 
         graph_hundred_component_prefix_tens += pynini.union(graph_tens,
                                                             (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")))
@@ -126,29 +126,30 @@ class CardinalFst(GraphFst):
         #If hazar reference is present, then extract the before "non hazar" part and delete "hazar"
         #else, just add 00
         graph_thousands_component = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete(thousands),
+            (graph_hundred_component_at_least_one_none_zero_digit + delete_space | pynutil.insert("1", weight=-0.1)) + pynutil.delete(thousands),
+            (pynutil.insert("0") + graph_hundred_component_prefix_tens),
             pynutil.insert("00", weight=0.1),
         )
 
         graph_lakhs_component = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete(lakhs),
+            (graph_hundred_component_at_least_one_none_zero_digit + delete_space | pynutil.insert("1", weight=-0.1)) + pynutil.delete(lakhs),
             pynutil.insert("00", weight=0.1)
         )
 
         graph_crores_component = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete(crores),
+            (graph_hundred_component_at_least_one_none_zero_digit + delete_space | pynutil.insert("1", weight=-0.1)) + pynutil.delete(crores),
             pynutil.insert("00", weight=0.1)
         )
 
         # fst = graph_thousands
         fst = pynini.union(
             graph_crores_component
-            + delete_space
+            + (delete_space | delete_space + del_And + delete_space)
             + graph_lakhs_component
-            + delete_space
-            + graph_thousands_component
-            + delete_space
-            + graph_hundred_component,
+            + (delete_space | delete_space + del_And + delete_space)
+            + (graph_thousands_component)
+            + (delete_space | delete_space + del_And + delete_space)
+            + (graph_hundred_component | pynutil.insert("", weight=-0.1)),
             graph_zero,
         )
 
