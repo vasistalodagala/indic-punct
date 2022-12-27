@@ -1,5 +1,5 @@
 from inverse_text_normalization.hi.run_predict import inverse_normalize_text as hi_itn
-# from inverse_text_normalization.en.run_predict import inverse_normalize_text as en_itn
+from inverse_text_normalization.en.run_predict import inverse_normalize_text as en_itn
 # from inverse_text_normalization.gu.run_predict import inverse_normalize_text as gu_itn
 # from inverse_text_normalization.te.run_predict import inverse_normalize_text as te_itn
 from inverse_text_normalization.mr.run_predict import inverse_normalize_text as mr_itn
@@ -49,17 +49,17 @@ def inverse_normalize_text(text_list, lang):
         itn_results = hi_itn(text_list)
         itn_results_formatted = [format_numbers_with_commas(sent=sent, lang=lang) for sent in itn_results]
         return itn_results_formatted
-    # elif lang in ['en', 'en_bio']:
-    #     itn_results = en_itn(text_list)
-    #     keywords_for_en_format = ["million", "billion", "trillion", "quadrillion", "quintillion", "sextillion"]
-    #     itn_results_formatted = []
-    #     for orig_sent, itn_sent in zip(text_list, itn_results):
-    #         use_en_format = any(item in orig_sent.split(' ') for item in keywords_for_en_format)
-    #         if use_en_format == 1:
-    #             lang_format = 'en'
-    #         else:
-    #             lang_format = 'hi'
-    #         itn_results_formatted.append(format_numbers_with_commas(sent=itn_sent, lang=lang_format))
+    elif lang in ['en', 'en_bio']:
+        itn_results = en_itn(text_list)
+        keywords_for_en_format = ["million", "billion", "trillion", "quadrillion", "quintillion", "sextillion"]
+        itn_results_formatted = []
+        for orig_sent, itn_sent in zip(text_list, itn_results):
+            use_en_format = any(item in orig_sent.split(' ') for item in keywords_for_en_format)
+            if use_en_format == 1:
+                lang_format = 'en'
+            else:
+                lang_format = 'hi'
+            itn_results_formatted.append(format_numbers_with_commas(sent=itn_sent, lang=lang_format))
 
     #     return itn_results_formatted
     # elif lang == 'gu':
