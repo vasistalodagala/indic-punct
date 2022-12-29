@@ -41,7 +41,7 @@ def format_numbers_with_commas(sent, lang):
                 words.append(word)
         else:
             words.append(word)
-    return ''.join(words)
+    return ' '.join(words)
 
 
 def inverse_normalize_text(text_list, lang):
