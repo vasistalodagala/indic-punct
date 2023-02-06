@@ -13,6 +13,9 @@
 # limitations under the License.
 
 
+import pynini
+from pynini.lib import pynutil, utf8
+
 from inverse_text_normalization.en.data_loader_utils import get_abs_path
 from inverse_text_normalization.en.graph_utils import (
     NEMO_DIGIT,
@@ -22,7 +25,9 @@ from inverse_text_normalization.en.graph_utils import (
     delete_space,
 )
 from inverse_text_normalization.en.utils import num_to_word
-
+# from inverse_text_normalization.lang_params import LANG
+# data_path = f'data/{LANG}_data/'y
+data_path = 'data/'
 
 try:
     import pynini
@@ -31,7 +36,6 @@ try:
     PYNINI_AVAILABLE = True
 except (ModuleNotFoundError, ImportError):
     PYNINI_AVAILABLE = False
-
 
 class CardinalFst(GraphFst):
     """
@@ -44,128 +48,130 @@ class CardinalFst(GraphFst):
         super().__init__(name="cardinal", kind="classify")
         # integer, negative
 
-        graph_zero = pynini.string_file(get_abs_path("data/numbers/zero.tsv"))
-        graph_digit = pynini.string_file(get_abs_path("data/numbers/digit.tsv"))
-        graph_ties = pynini.string_file(get_abs_path("data/numbers/ties.tsv"))
-        graph_teen = pynini.string_file(get_abs_path("data/numbers/teen.tsv"))
+        NEMO_CHAR = utf8.VALID_UTF8_CHAR
+        NEMO_SIGMA = pynini.closure(NEMO_CHAR)
+        NEMO_SPACE = " "
+        NEMO_WHITE_SPACE = pynini.union(" ", "\t", "\n", "\r", u"\u00A0").optimize()
+        NEMO_NOT_SPACE = pynini.difference(NEMO_CHAR, NEMO_WHITE_SPACE).optimize()
+        # NEMO_NON_BREAKING_SPACE = u"\u00A0"
 
-        graph_hundred = pynini.cross("hundred", "")
+        english_digit_file = get_abs_path(data_path + 'numbers/digit.tsv')
+        with open(english_digit_file) as f:
+            digits = f.readlines()
+        english_digits = ''.join([line.split()[-1] for line in digits])
+        english_digits_with_zero = "0" + english_digits
+        # print(f'hindi digits is {hindi_digits}')
+        ENGLISH_DIGIT = pynini.union(*english_digits).optimize()
+        ENGLISH_DIGIT_WITH_ZERO = pynini.union(*english_digits_with_zero).optimize()
 
-        graph_hundred_component = pynini.union(graph_digit + delete_space + graph_hundred, pynutil.insert("0"))
-        graph_hundred_component += delete_space
-        graph_hundred_component += pynini.union(
-            graph_teen | pynutil.insert("00"),
-            (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")),
-        )
+        graph_zero = pynini.string_file(get_abs_path(data_path + "numbers/zero.tsv"))
+        #graph_tens = pynini.string_file(get_abs_path(data_path + "numbers/tens.tsv"))
+        graph_digit = pynini.string_file(get_abs_path(data_path + "numbers/digit.tsv"))
+        graph_multiples = pynini.string_file(get_abs_path(data_path + "numbers/multiples.tsv"))
+        graph_ties = pynini.string_file(get_abs_path(data_path + "numbers/ties.tsv"))
+        graph_chars = pynini.string_file(get_abs_path(data_path + "numbers/alphabets.tsv"))
+        graph_char_multiples = pynini.string_file(get_abs_path(data_path + "numbers/multiples_alphabets.tsv"))
+        #graph_tens_en = pynini.string_file(get_abs_path(data_path + "numbers/tens-en.tsv"))
+        graph_teen = pynini.string_file(get_abs_path(data_path + "numbers/teen.tsv"))
 
-        graph_hundred_component_in = pynini.union(graph_digit + delete_space + graph_hundred, pynutil.insert(""))
-        graph_hundred_component_in += delete_space
-        graph_hundred_component_in += pynini.union(
-            graph_teen | pynutil.insert("00"),
-            (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")),
-        )
+        graph_tens = pynini.union(graph_ties + delete_space + graph_digit, graph_teen)
+
+        cents = pynini.accep("hundred") | pynini.accep("hundreds") #| pynini.accep("हन्ड्रड")
+        thousands = pynini.accep("thousand") | pynini.accep("thousands") #| pynini.accep("थाउज़ेंड") | pynini.accep("हजार") | pynini.accep("थाउजेंड")
+        lakhs = pynini.accep("lakh") | pynini.accep("lakhs") #| pynini.accep("लेक")
+        crores = pynini.accep("crore") | pynini.accep("crores")
+
+        del_And = pynutil.delete(pynini.closure(pynini.accep("and"), 1 ,1 ))
+        
+        graph_hundred = pynini.cross("hundred", "100") | pynini.cross("hundreds", "100") #| pynini.cross("हन्ड्रड", "100")
+        graph_thousand  = pynini.cross("thousand", "1000") | pynini.cross("thousands", "1000") #| pynini.cross("थाउज़ेंड", "1000") | pynini.cross("थाउजेंड", "1000") | pynini.cross("हजार", "1000")
+        graph_lakh = pynini.cross("lakh", "100000") | pynini.cross("lakhs", "100000") #| pynini.cross("लेक", "100000")
+        graph_crore = pynini.cross("crore", "10000000") | pynini.cross("crores", "10000000")
+
+        #Handles 1-999 (direct spoken)
+        graph_hundred_component = pynini.union((graph_digit | pynutil.insert("1")) + delete_space + pynutil.delete(cents) + (delete_space + del_And + delete_space | delete_space),
+                                               pynutil.insert("0"))
+        graph_hundred_component += pynini.union(graph_tens , (graph_ties  | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")))
+        # handling double digit hundreds like उन्निस सौ + digit/thousand/lakh/crore etc
+        #graph_hundred_component_prefix_tens = pynini.union(graph_tens + delete_space + pynutil.delete(cents) + delete_space,)
+        #                                                   # pynutil.insert("55"))
+        graph_hundred_component_prefix_tens = pynini.union((graph_tens) + delete_space + pynutil.delete(cents) + (delete_space + del_And + delete_space | delete_space),
+                                                            )
+
+        graph_hundred_component_prefix_tens += pynini.union(graph_tens,
+                                                            (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")))
+
+        # Although above two components have the capability to handle 1-99 also, but since we are combining both of them
+        # later on, ambiguity creeps in. So, we define a shorter fst below to handle the cases from 1-99 exclusively.
 
         # graph_hundred_component_at_least_one_none_zero_digit = graph_hundred_component @ (
-        #     pynini.closure(NEMO_DIGIT) + (NEMO_DIGIT - "0") + pynini.closure(NEMO_DIGIT)
+        #         pynini.closure(HINDI_DIGIT_WITH_ZERO) + (HINDI_DIGIT_WITH_ZERO - "०") + pynini.closure(HINDI_DIGIT_WITH_ZERO)
         # )
-        graph_hundred_component_at_least_one_none_zero_digit = graph_hundred_component
+
+        #Handles 10-99 in both hi, en
+        graph_hundred_component_non_hundred = pynini.union(graph_tens,
+                                                            (graph_ties | pynutil.insert("0")) + delete_space + (graph_digit | pynutil.insert("0")))
+
+        #This thing now handles only 100-999 cases (in regular spoken form) and 1000-9999 (in hundred spoken form)
+        #Because of combining these both FSTs, there comes ambiguity while dealing with 1-99 cases.
+        graph_hundred_component = pynini.union(graph_hundred_component,
+                                               graph_hundred_component_prefix_tens)
+
+        graph_hundred_component_at_least_one_none_zero_digit = pynini.union(graph_hundred_component, graph_hundred_component_non_hundred)
+
+
 
         self.graph_hundred_component_at_least_one_none_zero_digit = (
             graph_hundred_component_at_least_one_none_zero_digit
         )
 
-        graph_thousands = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete("thousand"),
-            pynutil.insert("000", weight=0.1),
-        )
-
-        graph_million = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete("million"),
-            pynutil.insert("000", weight=0.1),
-        )
-        graph_billion = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete("billion"),
-            pynutil.insert("000", weight=0.1),
-        )
-        graph_trillion = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete("trillion"),
-            pynutil.insert("000", weight=0.1),
-        )
-        graph_quadrillion = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete("quadrillion"),
-            pynutil.insert("000", weight=0.1),
-        )
-        graph_quintillion = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete("quintillion"),
-            pynutil.insert("000", weight=0.1),
-        )
-        graph_sextillion = pynini.union(
-            graph_hundred_component_at_least_one_none_zero_digit + delete_space + pynutil.delete("sextillion"),
-            pynutil.insert("000", weight=0.1),
-        )
-
-        graph = pynini.union(
-            graph_sextillion
-            + delete_space
-            + graph_quintillion
-            + delete_space
-            + graph_quadrillion
-            + delete_space
-            + graph_trillion
-            + delete_space
-            + graph_billion
-            + delete_space
-            + graph_million
-            + delete_space
-            + graph_thousands
-            + delete_space
-            + graph_hundred_component,
-            graph_zero,
-        )
-
+        #If hazar reference is present, then extract the before "non hazar" part and delete "hazar"
+        #else, just add 00
         graph_thousands_component = pynini.union(
-            graph_hundred_component_in + delete_space + pynutil.delete("thousand"),
-            pynutil.insert("00", weight=0.1),
+            (graph_hundred_component_at_least_one_none_zero_digit + delete_space | pynutil.insert("1", weight=-0.1)) + pynutil.delete(thousands),
+            (pynutil.insert("0") + graph_hundred_component_prefix_tens),
+            pynutil.insert("00", weight=-0.1),
         )
 
         graph_lakhs_component = pynini.union(
-            graph_hundred_component_in + delete_space + pynutil.delete("lakh"),
-            pynutil.insert("00", weight=0.1)
+            (graph_hundred_component_at_least_one_none_zero_digit + delete_space | pynutil.insert("1", weight=-0.1)) + pynutil.delete(lakhs),
+            pynutil.insert("00", weight=-0.1)
         )
-        #
+
         graph_crores_component = pynini.union(
-            graph_hundred_component_in + delete_space + pynutil.delete("crore"),
-            pynutil.insert("000", weight=0.1)
+            (graph_hundred_component_at_least_one_none_zero_digit + delete_space | pynutil.insert("1", weight=-0.1)) + pynutil.delete(crores),
+            pynutil.insert("00", weight=-0.1)
         )
-        #
-        graph_in = pynini.union(
+
+        # fst = graph_thousands
+        fst = pynini.union(
             graph_crores_component
-            + delete_space
+            + (delete_space | delete_space + del_And + delete_space)
             + graph_lakhs_component
-            + delete_space
-            + graph_thousands_component
-            + delete_space
-            + graph_hundred_component,
+            + (delete_space | delete_space + del_And + delete_space)
+            + (graph_thousands_component)
+            + (delete_space | delete_space + del_And + delete_space)
+            + (graph_hundred_component | pynutil.insert("", weight=0.1)),
             graph_zero,
         )
 
-        graph = pynini.union(graph, graph_in)
-        graph = graph @ pynini.union(
-            pynutil.delete(pynini.closure("0")) + pynini.difference(NEMO_DIGIT, "0") + pynini.closure(NEMO_DIGIT), "0"
-        )
+        fst_crore = fst+graph_crore # handles words like चार हज़ार करोड़
+        fst_lakh = fst+graph_lakh # handles words like चार हज़ार लाख
+        fst = pynini.union(fst, fst_crore, fst_lakh, graph_crore, graph_lakh, graph_thousand, graph_hundred, graph_zero, graph_multiples, graph_char_multiples, graph_chars)
 
-        labels_exception = [num_to_word(x) for x in range(0, 13)]
-        graph_exception = pynini.union(*labels_exception)
+        # labels_exception = [num_to_word(x) for x in range(1, 3)]
+        # graph_exception = pynini.union(*labels_exception)
 
-        graph = pynini.cdrewrite(pynutil.delete("and"), NEMO_SPACE, NEMO_SPACE, NEMO_SIGMA) @ graph
+        self.graph_no_exception = fst
+        self.graph = fst
 
-        self.graph_no_exception = graph
-
-        self.graph = (pynini.project(graph, "input") - graph_exception.arcsort()) @ graph
+        # self.graph = (pynini.project(fst, "input") - graph_exception.arcsort()) @ fst
 
         optional_minus_graph = pynini.closure(
             pynutil.insert("negative: ") + pynini.cross("minus", "\"-\"") + NEMO_SPACE, 0, 1
         )
+
+        
 
         final_graph = optional_minus_graph + pynutil.insert("integer: \"") + self.graph + pynutil.insert("\"")
 

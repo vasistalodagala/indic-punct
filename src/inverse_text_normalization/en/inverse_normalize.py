@@ -17,6 +17,12 @@ import sys
 from collections import OrderedDict
 from typing import List
 
+# from inverse_text_normalization.lang_params import LANG
+# lang_taggers = f'inverse_text_normalization.taggers.{LANG}_taggers'
+# lang_taggers = 'inverse_text_normalization.hi.taggers.hi_taggers'
+
+# exec(f"from {lang_taggers}.tokenize_and_classify_final import ClassifyFinalFst")
+
 from inverse_text_normalization.en.taggers.tokenize_and_classify_final import ClassifyFinalFst
 from inverse_text_normalization.en.token_parser import PRESERVE_ORDER_KEY, TokenParser
 from inverse_text_normalization.en.verbalizers.verbalize_final import VerbalizeFinalFst
@@ -166,12 +172,14 @@ def inverse_normalize(text: str, verbose: bool) -> str:
 
     text = pynini.escape(text)
     tagged_lattice = find_tags(text)
+    # print("tagged lattice is ", tagged_lattice)
     tagged_text = select_tag(tagged_lattice)
     parser(tagged_text)
     tokens = parser.parse()
     tags_reordered = generate_permutations(tokens)
     for tagged_text in tags_reordered:
         tagged_text = pynini.escape(tagged_text)
+        # print("tagged text is ", tagged_text)
         verbalizer_lattice = find_verbalizer(tagged_text)
         if verbalizer_lattice.num_states() == 0:
             continue
