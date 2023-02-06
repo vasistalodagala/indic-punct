@@ -128,17 +128,17 @@ class CardinalFst(GraphFst):
         graph_thousands_component = pynini.union(
             (graph_hundred_component_at_least_one_none_zero_digit + delete_space | pynutil.insert("1", weight=-0.1)) + pynutil.delete(thousands),
             (pynutil.insert("0") + graph_hundred_component_prefix_tens),
-            pynutil.insert("00", weight=0.1),
+            pynutil.insert("00", weight=-0.1),
         )
 
         graph_lakhs_component = pynini.union(
             (graph_hundred_component_at_least_one_none_zero_digit + delete_space | pynutil.insert("1", weight=-0.1)) + pynutil.delete(lakhs),
-            pynutil.insert("00", weight=0.1)
+            pynutil.insert("00", weight=-0.1)
         )
 
         graph_crores_component = pynini.union(
             (graph_hundred_component_at_least_one_none_zero_digit + delete_space | pynutil.insert("1", weight=-0.1)) + pynutil.delete(crores),
-            pynutil.insert("00", weight=0.1)
+            pynutil.insert("00", weight=-0.1)
         )
 
         # fst = graph_thousands
@@ -149,7 +149,7 @@ class CardinalFst(GraphFst):
             + (delete_space | delete_space + del_And + delete_space)
             + (graph_thousands_component)
             + (delete_space | delete_space + del_And + delete_space)
-            + (graph_hundred_component | pynutil.insert("", weight=-0.1)),
+            + (graph_hundred_component | pynutil.insert("", weight=0.1)),
             graph_zero,
         )
 
