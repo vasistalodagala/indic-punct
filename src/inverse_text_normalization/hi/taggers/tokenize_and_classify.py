@@ -68,7 +68,7 @@ class ClassifyFst(GraphFst):
             | pynutil.add_weight(measure, 1.1)
             | pynutil.add_weight(cardinal, 1.1)
             | pynutil.add_weight(ordinal, 1.1)
-            | pynutil.add_weight(money, 1.1)
+            # | pynutil.add_weight(money, 1.1)
             | pynutil.add_weight(word, 100)
         )
 
