@@ -2,7 +2,7 @@ from inverse_text_normalization.hi.run_predict import inverse_normalize_text as 
 from inverse_text_normalization.en.run_predict import inverse_normalize_text as en_itn
 # from inverse_text_normalization.gu.run_predict import inverse_normalize_text as gu_itn
 # from inverse_text_normalization.te.run_predict import inverse_normalize_text as te_itn
-from inverse_text_normalization.mr.run_predict import inverse_normalize_text as mr_itn
+# from inverse_text_normalization.mr.run_predict import inverse_normalize_text as mr_itn
 # from inverse_text_normalization.pa.run_predict import inverse_normalize_text as pa_itn
 # from inverse_text_normalization.ta.run_predict import inverse_normalize_text as ta_itn
 # from inverse_text_normalization.bn.run_predict import inverse_normalize_text as bn_itn
