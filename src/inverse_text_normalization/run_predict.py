@@ -4,10 +4,10 @@ from inverse_text_normalization.en.run_predict import inverse_normalize_text as 
 # from inverse_text_normalization.te.run_predict import inverse_normalize_text as te_itn
 # from inverse_text_normalization.mr.run_predict import inverse_normalize_text as mr_itn
 # from inverse_text_normalization.pa.run_predict import inverse_normalize_text as pa_itn
-# from inverse_text_normalization.ta.run_predict import inverse_normalize_text as ta_itn
+from inverse_text_normalization.ta.run_predict import inverse_normalize_text as ta_itn
 # from inverse_text_normalization.bn.run_predict import inverse_normalize_text as bn_itn
 # from inverse_text_normalization.ml.run_predict import inverse_normalize_text as ml_itn
-# from inverse_text_normalization.ori.run_predict import inverse_normalize_text as or_itn
+from inverse_text_normalization.ori.run_predict import inverse_normalize_text as or_itn
 # from inverse_text_normalization.asm.run_predict import inverse_normalize_text as as_itn
 # from inverse_text_normalization.kn.run_predict import inverse_normalize_text as kn_itn
 
@@ -53,7 +53,15 @@ def inverse_normalize_text(text_list, lang):
         itn_results = en_itn(text_list)
         itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
         return itn_results_formatted
-
+    elif lang == 'ta':
+        itn_results = ta_itn(text_list)
+        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+        return itn_results_formatted
+    elif lang == 'or':
+        itn_results = or_itn(text_list)
+        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+        return itn_results_formatted
+    
     #     return itn_results_formatted
     # elif lang == 'gu':
     #     itn_results = gu_itn(text_list)
@@ -66,11 +74,11 @@ def inverse_normalize_text(text_list, lang):
     #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
     #     return itn_results_formatted
 
-    elif lang == 'mr':
+    # elif lang == 'mr':
 
-        itn_results = mr_itn(text_list)
-        itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-        return itn_results_formatted
+    #     itn_results = mr_itn(text_list)
+    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
+    #     return itn_results_formatted
 
     # elif lang == 'pa':
 
@@ -78,11 +86,6 @@ def inverse_normalize_text(text_list, lang):
     #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
     #     return itn_results_formatted
 
-    # elif lang == 'ta':
-
-    #     itn_results = ta_itn(text_list)
-    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-    #     return itn_results_formatted
 
     # elif lang == 'bn':
 
@@ -93,12 +96,6 @@ def inverse_normalize_text(text_list, lang):
     # elif lang == 'ml':
 
     #     itn_results = ml_itn(text_list)
-    #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
-    #     return itn_results_formatted
-
-    # elif lang == 'or':
-
-    #     itn_results = or_itn(text_list)
     #     itn_results_formatted = [format_numbers_with_commas(sent=sent, lang='hi') for sent in itn_results]
     #     return itn_results_formatted
 
