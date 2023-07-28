@@ -72,6 +72,7 @@ class CardinalFst(GraphFst):
         tamil_graph_thousand_digit = pynini.string_file(get_abs_path(data_path + "numbers/ta_thousand_digit.tsv"))
         tamil_graph_lakh_digit = pynini.string_file(get_abs_path(data_path + "numbers/ta_lakh_digit.tsv"))
         tamil_graph_crore_digit = pynini.string_file(get_abs_path(data_path + "numbers/ta_crore_digit.tsv"))
+        tamil_graph_exception_list = pynini.string_file(get_abs_path(data_path + "numbers/ta_exceptions.tsv"))
 
         graph_zero = pynini.string_file(get_abs_path(data_path + "numbers/zero.tsv"))  
         graph_digit = pynini.string_file(get_abs_path(data_path + "numbers/digit.tsv"))
@@ -190,7 +191,7 @@ class CardinalFst(GraphFst):
             + (tamil_graph_thousands_component)
             + (delete_space)
             + (tamil_graph_hundred_component | pynutil.insert("", weight=0.1)),
-            tamil_graph_zero,
+            graph_zero,
         )
 
         fst_en = pynini.union(
@@ -201,13 +202,12 @@ class CardinalFst(GraphFst):
             + (graph_thousands_component)
             + (delete_space | delete_space + del_And + delete_space)
             + (graph_hundred_component | pynutil.insert("", weight=0.1)),
-            graph_zero,
         )
         fst_crore = fst_en+graph_crore # handles words like चार हज़ार करोड़
         fst_lakh = fst_en+graph_lakh # handles words like चार हज़ार लाख
 
-        fst = pynini.union(fst_tam, tamil_graph_crores , tamil_graph_lakhs, tamil_graph_thousands, tamil_graph_hundred, tamil_graph_zero,
-                           fst_en, fst_crore, fst_lakh, graph_crore, graph_lakh, graph_thousand, graph_hundred, graph_zero, graph_multiples)
+        fst = pynini.union(fst_tam, tamil_graph_crores , tamil_graph_lakhs, tamil_graph_thousands, tamil_graph_hundred, tamil_graph_exception_list,
+                           fst_en, fst_crore, fst_lakh, graph_crore, graph_lakh, graph_thousand, graph_hundred, graph_multiples)
 
         self.graph_no_exception = fst
         self.graph = fst

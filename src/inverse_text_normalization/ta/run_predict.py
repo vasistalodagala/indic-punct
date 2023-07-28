@@ -66,12 +66,16 @@ def parse_args():
 
 
 def remove_starting_zeros(word, hindi_digits_with_zero):
-    currency_handled = ['$', '₹', '£', '€']
+    currency_handled = ['$', '₹']
     currency = ''
     if word[0] in currency_handled:
         currency = word[0]
         word = word[1:]
 
+    if word == "0" or word == "00" or word == "000":
+        print(word)
+        return word
+        
     if all(v == '0' for v in word): # all the digits in num are zero eg: "00000000"
         word = ''
 
@@ -106,7 +110,6 @@ def inverse_normalize_text(text_list, verbose=False):
 
     inverse_normalizer = INVERSE_NORMALIZERS['nemo']
     hindi_digits_with_zero = '0123456789'
-    text_list = [sent.lower() for sent in text_list]
     inverse_normalizer_prediction = inverse_normalizer(text_list, verbose=verbose)
     astr_list = []
     comma_sep_num_list = []
@@ -115,7 +118,8 @@ def inverse_normalize_text(text_list, verbose=False):
         trimmed_sent = ' '.join(
             [remove_starting_zeros(word, hindi_digits_with_zero) for word in sent.split(' ')])
         astr_list.append(trimmed_sent)
-
+        # comma_sep_num_list.append(
+        #     ' '.join([indian_format(word, hindi_digits_with_zero) for word in trimmed_sent.split(' ')]))
     return astr_list
 
 
