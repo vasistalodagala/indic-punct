@@ -78,17 +78,17 @@ class CardinalFst(GraphFst):
         hundred_alt = hundreds[1].strip()
         hundred_alt_2 = hundreds[2].strip()
 
-        with open(get_abs_path(data_path + "numbers/thousands.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/thousands.tsv"), encoding="utf-8") as f:
             thousand = f.read().strip()
         #thousand = thousands.strip()
 
 
 
-        with open(get_abs_path(data_path + "numbers/lakh.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/lakh.tsv"), encoding="utf-8") as f:
             lakhs = f.readlines()
         lakh = lakhs[0].strip()
 
-        with open(get_abs_path(data_path + "numbers/crore.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/crore.tsv"), encoding="utf-8") as f:
             crores = f.readlines()
         crore = crores[0].strip()
 

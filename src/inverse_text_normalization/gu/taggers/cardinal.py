@@ -71,19 +71,19 @@ class CardinalFst(GraphFst):
         graph_tens = pynini.string_file(get_abs_path(data_path + "numbers/tens.tsv"))
         graph_digit = pynini.string_file(get_abs_path(data_path + "numbers/digit.tsv"))
 
-        with open(get_abs_path(data_path + "numbers/hundred.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/hundred.tsv"), encoding="utf-8") as f:
             hundred = f.read()
-        with open(get_abs_path(data_path + "numbers/thousands.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/thousands.tsv"), encoding="utf-8") as f:
             thousand = f.read()
-        with open(get_abs_path(data_path + "numbers/lakh.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/lakh.tsv"), encoding="utf-8") as f:
             lakh = f.read()
 
-        with open(get_abs_path(data_path + "numbers/crore.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/crore.tsv"), encoding="utf-8") as f:
             crores = f.readlines()
         crore = crores[0]
         crore_alt = crores[1]
 
-        # with open(get_abs_path(data_path + "numbers/hundred.tsv")) as f:
+        # with open(get_abs_path(data_path + "numbers/hundred.tsv"), encoding="utf-8") as f:
         #     hundred = f.read()
 
         graph_hundred = pynini.cross(hundred, "00")
