@@ -320,7 +320,7 @@ def filter_loaded_data(data: List[Instance], verbose: bool = False) -> List[Inst
                 updated_instance = True
         if updated_instance:
             if verbose:
-                print(instance)
+                # print(instance)
             updates_instances.append(instance)
     return updates_instances
 
@@ -336,7 +336,7 @@ if __name__ == "__main__":
     args = parse_args()
     file_path = args.input
 
-    print("Loading training data: " + file_path)
+    # print("Loading training data: " + file_path)
     instance_list = load_files([file_path])  # List of instances
     filtered_instance_list = filter_loaded_data(instance_list, args.verbose)
     training_data_to_sentences(filtered_instance_list)

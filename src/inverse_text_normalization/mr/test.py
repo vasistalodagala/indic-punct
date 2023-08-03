@@ -4,7 +4,7 @@ import re
 
 from inverse_text_normalization.run_predict import inverse_normalize_text
 x = inverse_normalize_text(['शून्य'],'mr')
-print(x)
+# print(x)
 
 def load_data():
   input = []
@@ -42,10 +42,10 @@ for i in range(500):
     # pred = int(pred[0])
     l.append(str(output[i]))
     if(pred != l ):
-        print(pred, l)
+        # print(pred, l)
         count+=1
         #writing to the file
         line = input_new[i] + '\t' + pred[0] + '\t' + l[0] + '\n'
         f.write(line)
-print(count)
+# print(count)
 f.close()
