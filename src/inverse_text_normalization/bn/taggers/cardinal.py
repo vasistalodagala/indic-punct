@@ -59,7 +59,7 @@ class CardinalFst(GraphFst):
         # NEMO_NON_BREAKING_SPACE = u"\u00A0"
 
         hindi_digit_file = get_abs_path(data_path + 'numbers/digit.tsv')
-        with open(hindi_digit_file) as f:
+        with open(hindi_digit_file, encoding='utf-8') as f:
             digits = f.readlines()
         hindi_digits = ''.join([line.split()[-1] for line in digits])
         hindi_digits_with_zero = "0" + hindi_digits
