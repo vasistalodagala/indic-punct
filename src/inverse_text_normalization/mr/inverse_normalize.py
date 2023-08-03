@@ -185,7 +185,7 @@ def inverse_normalize(text: str, verbose: bool) -> str:
             continue
         output = select_verbalizer(verbalizer_lattice)
         if verbose:
-            # print(output)
+            print(output)
         return output
     raise ValueError()
 
