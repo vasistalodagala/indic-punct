@@ -1,13 +1,13 @@
-from inverse_text_normalization.hi.run_predict import inverse_normalize_text as hi_itn
+# from inverse_text_normalization.hi.run_predict import inverse_normalize_text as hi_itn
 from inverse_text_normalization.en.run_predict import inverse_normalize_text as en_itn
 # from inverse_text_normalization.gu.run_predict import inverse_normalize_text as gu_itn
 # from inverse_text_normalization.te.run_predict import inverse_normalize_text as te_itn
 # from inverse_text_normalization.mr.run_predict import inverse_normalize_text as mr_itn
 # from inverse_text_normalization.pa.run_predict import inverse_normalize_text as pa_itn
-from inverse_text_normalization.ta.run_predict import inverse_normalize_text as ta_itn
+# from inverse_text_normalization.ta.run_predict import inverse_normalize_text as ta_itn
 # from inverse_text_normalization.bn.run_predict import inverse_normalize_text as bn_itn
 # from inverse_text_normalization.ml.run_predict import inverse_normalize_text as ml_itn
-from inverse_text_normalization.ori.run_predict import inverse_normalize_text as or_itn
+# from inverse_text_normalization.ori.run_predict import inverse_normalize_text as or_itn
 # from inverse_text_normalization.asm.run_predict import inverse_normalize_text as as_itn
 # from inverse_text_normalization.kn.run_predict import inverse_normalize_text as kn_itn
 
