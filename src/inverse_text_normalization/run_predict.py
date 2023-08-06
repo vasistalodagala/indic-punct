@@ -5,6 +5,7 @@ from inverse_text_normalization.en.run_predict import inverse_normalize_text as 
 # from inverse_text_normalization.mr.run_predict import inverse_normalize_text as mr_itn
 # from inverse_text_normalization.pa.run_predict import inverse_normalize_text as pa_itn
 from inverse_text_normalization.ta.run_predict import inverse_normalize_text as ta_itn
+from inverse_text_normalization.ta.run_predict import inverse_normalize_text as ta_itn
 # from inverse_text_normalization.bn.run_predict import inverse_normalize_text as bn_itn
 # from inverse_text_normalization.ml.run_predict import inverse_normalize_text as ml_itn
 from inverse_text_normalization.ori.run_predict import inverse_normalize_text as or_itn
