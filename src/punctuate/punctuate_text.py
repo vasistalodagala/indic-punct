@@ -97,9 +97,9 @@ class Punctuation:
 
     def load_model_parameters(self):
         self.download_model_data()
-        with open(self.encoder_path) as label_encoder:
+        with open(self.encoder_path, encoding='utf-8') as label_encoder:
             train_encoder = json.load(label_encoder)
-        with open(self.dict_map) as dict_map:
+        with open(self.dict_map, encoding='utf-8') as dict_map:
             punctuation_dict = json.load(dict_map)
 
         tokenizer = AlbertTokenizer.from_pretrained(self.albert_metadata)
