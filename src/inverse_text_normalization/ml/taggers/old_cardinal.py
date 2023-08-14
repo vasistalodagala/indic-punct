@@ -59,11 +59,11 @@ class CardinalFst(GraphFst):
         # NEMO_NON_BREAKING_SPACE = u"\u00A0"
 
         hindi_digit_file = get_abs_path(data_path + 'numbers/digit.tsv')
-        with open(hindi_digit_file) as f:
+        with open(hindi_digit_file, encoding='utf-8') as f:
             digits = f.readlines()
         hindi_digits = ''.join([line.split()[-1] for line in digits])
         hindi_digits_with_zero = "0" + hindi_digits
-        # print(f'hindi digits is {hindi_digits}')
+        # # print(f'hindi digits is {hindi_digits}')
         HINDI_DIGIT = pynini.union(*hindi_digits).optimize()
         HINDI_DIGIT_WITH_ZERO = pynini.union(*hindi_digits_with_zero).optimize()
 
@@ -77,20 +77,20 @@ class CardinalFst(GraphFst):
         # hundred_alt = hundreds[1] # vandala
         # hundred_alt_2 = hundreds[2]  # vandalu
 
-        with open(get_abs_path(data_path + "numbers/thousands.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/thousands.tsv"), encoding="utf-8") as f:
             thousands = f.readlines()
         thousand = thousands[0] # veyiii
         # thousand_alt = thousands[1] # velu
         # thousand_alt_2 = thousands[2] # vela
 
-        with open(get_abs_path(data_path + "numbers/lakh.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/lakh.tsv"), encoding="utf-8") as f:
             lakh = f.read()
 
-        with open(get_abs_path(data_path + "numbers/crore.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/crore.tsv"), encoding="utf-8") as f:
             crore = f.read()
         
 
-        # with open(get_abs_path(data_path + "numbers/hundred.tsv")) as f:
+        # with open(get_abs_path(data_path + "numbers/hundred.tsv"), encoding="utf-8") as f:
         #     hundred = f.read()
 
         graph_hundred = pynini.cross(hundred, "00")

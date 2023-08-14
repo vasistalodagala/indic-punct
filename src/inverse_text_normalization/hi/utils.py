@@ -33,7 +33,7 @@ def num_to_word(x: Union[str, int]):
     if isinstance(x, int):
         x = str(x)
         # x = _inflect.number_to_words(str(x)).replace("-", " ").replace(",", "")
-        with open(get_abs_path(data_path + "numbers/digit.tsv")) as f:
+        with open(get_abs_path(data_path + "numbers/digit.tsv"), encoding="utf-8") as f:
             lines = f.readlines()
         for line in lines:
 

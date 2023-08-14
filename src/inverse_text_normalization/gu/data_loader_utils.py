@@ -134,8 +134,8 @@ def evaluate(preds: List[str], labels: List[str], input: Optional[List[str]] = N
         else:
             if input:
                 print(f"inpu: {json.dumps(input[i])}")
-            print(f"gold: {json.dumps(label_norm)}")
-            print(f"pred: {json.dumps(pred_norm)}")
+            # print(f"gold: {json.dumps(label_norm)}")
+            # print(f"pred: {json.dumps(pred_norm)}")
     return acc / nums
 
 

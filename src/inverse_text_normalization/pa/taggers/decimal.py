@@ -72,7 +72,7 @@ class DecimalFst(GraphFst):
         graph_decimal = pynini.closure(graph_decimal + delete_space) + graph_decimal
         self.graph = graph_decimal
 
-        with open(get_abs_path(data_path+"numbers/decimal.tsv")) as f:
+        with open(get_abs_path(data_path+"numbers/decimal.tsv"), encoding="utf-8") as f:
             decimal_pt = f.read().strip()
         point = pynutil.delete(decimal_pt)
 

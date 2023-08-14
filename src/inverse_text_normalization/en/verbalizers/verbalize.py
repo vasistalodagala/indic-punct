@@ -37,7 +37,8 @@ class VerbalizeFst(GraphFst):
         measure = MeasureFst().fst
         time = TimeFst().fst
         date = DateFst().fst
-        money = MoneyFst().fst
+        # money = MoneyFst().fst
         whitelist = WhiteListFst().fst
-        graph = time | date | money | measure | ordinal | decimal | cardinal | whitelist
+        graph = time | date | measure | ordinal | decimal | cardinal | whitelist
+        # graph = time | date | money | measure | ordinal | decimal | cardinal | whitelist
         self.fst = graph

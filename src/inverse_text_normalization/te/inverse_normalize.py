@@ -172,14 +172,14 @@ def inverse_normalize(text: str, verbose: bool) -> str:
 
     text = pynini.escape(text)
     tagged_lattice = find_tags(text)
-    # print("tagged lattice is ", tagged_lattice)
+    # # print("tagged lattice is ", tagged_lattice)
     tagged_text = select_tag(tagged_lattice)
     parser(tagged_text)
     tokens = parser.parse()
     tags_reordered = generate_permutations(tokens)
     for tagged_text in tags_reordered:
         tagged_text = pynini.escape(tagged_text)
-        # print("tagged text is ", tagged_text)
+        # # print("tagged text is ", tagged_text)
         verbalizer_lattice = find_verbalizer(tagged_text)
         if verbalizer_lattice.num_states() == 0:
             continue
@@ -212,7 +212,7 @@ def inverse_normalize_nemo(texts: List[str], verbose=False) -> List[str]:
     Returns converted input strings
     """
     res = []
-    for input in tqdm(texts):
+    for input in texts:
         try:
             text = inverse_normalize(input, verbose=verbose)
         except:

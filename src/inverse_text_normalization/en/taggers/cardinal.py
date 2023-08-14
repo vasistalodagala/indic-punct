@@ -56,11 +56,11 @@ class CardinalFst(GraphFst):
         # NEMO_NON_BREAKING_SPACE = u"\u00A0"
 
         english_digit_file = get_abs_path(data_path + 'numbers/digit.tsv')
-        with open(english_digit_file) as f:
+        with open(english_digit_file, encoding='utf-8') as f:
             digits = f.readlines()
         english_digits = ''.join([line.split()[-1] for line in digits])
         english_digits_with_zero = "0" + english_digits
-        # print(f'hindi digits is {hindi_digits}')
+        # # print(f'hindi digits is {hindi_digits}')
         ENGLISH_DIGIT = pynini.union(*english_digits).optimize()
         ENGLISH_DIGIT_WITH_ZERO = pynini.union(*english_digits_with_zero).optimize()
 

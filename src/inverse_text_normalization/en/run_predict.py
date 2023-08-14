@@ -73,7 +73,7 @@ def remove_starting_zeros(word, english_digits_with_zero):
         word = word[1:]
 
     if word == "0" or word == "00" or word == "000":
-        print(word)
+        # print(word)
         return word
         
     if all(v == '0' for v in word): # all the digits in num are zero eg: "00000000"
@@ -86,7 +86,7 @@ def remove_starting_zeros(word, english_digits_with_zero):
             if len(word.split('.')[0]) == 1:
                 return word
         pos_non_zero_nums = [pos for pos, word in enumerate(list(word)) if word != "0"]
-        # print(pos_non_zero_nums, word)
+        # # print(pos_non_zero_nums, word)
         first_non_zero_num = min(pos_non_zero_nums)
         word = word[first_non_zero_num:]
     if currency:
@@ -136,7 +136,7 @@ if __name__ == "__main__":
 
     inverse_normalizer = INVERSE_NORMALIZERS[args.inverse_normalizer]
 
-    print("Loading data: " + file_path)
+    # print("Loading data: " + file_path)
     data = load_file(file_path)
 
     # updated_sentences = []
@@ -149,25 +149,25 @@ if __name__ == "__main__":
 
     english_digits_with_zero = '0123456789'
 
-    # print("- Data: " + str(len(data)) + " sentences")
+    # # print("- Data: " + str(len(data)) + " sentences")
     inverse_normalizer_prediction = inverse_normalizer(data, verbose=False)
 
     astr_list = []
     comma_sep_num_list = []
-    print(inverse_normalizer_prediction)
-    print('-' * 100)
+    # print(inverse_normalizer_prediction)
+    # print('-' * 100)
     inverse_normalizer_prediction = [sent.replace('\r', '') for sent in inverse_normalizer_prediction]
-    print(inverse_normalizer_prediction)
+    # print(inverse_normalizer_prediction)
     for sent in inverse_normalizer_prediction:
         trimmed_sent = ' '.join([remove_starting_zeros(word, english_digits_with_zero) for word in sent.split(' ')])
         astr_list.append(trimmed_sent)
         comma_sep_num_list.append(
             ' '.join([indian_format(word, english_digits_with_zero) for word in trimmed_sent.split(' ')]))
 
-    print('Trimmed output')
-    print(astr_list)
-    print('-' * 100)
-    print('Indian Format nums output')
-    print(comma_sep_num_list)
+    # print('Trimmed output')
+    # print(astr_list)
+    # print('-' * 100)
+    # print('Indian Format nums output')
+    # print(comma_sep_num_list)
     write_file(args.output, comma_sep_num_list)
-    # print(f"- Normalized. Writing out to {args.output}")
+    # # print(f"- Normalized. Writing out to {args.output}")
