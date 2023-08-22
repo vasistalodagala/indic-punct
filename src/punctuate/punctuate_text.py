@@ -111,7 +111,7 @@ class Punctuation:
 
         model = nn.DataParallel(model)
         checkpoint = torch.load(self.model_path, map_location=self.device)
-        model.load_state_dict(checkpoint['state_dict'])
+        model.load_state_dict(checkpoint['state_dict'], strict=False)
         model = model.module.to(self.device)
 
         model.eval()
